@@ -1,9 +1,0 @@
-*.log
-*.pyc
-*.pyo
-__pycache__/
-*.log
-*~
-
-bomberjam.exe
-replay.json

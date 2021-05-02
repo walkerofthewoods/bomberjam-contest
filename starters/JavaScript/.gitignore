@@ -1,7 +1,0 @@
-*.log
-*~
-
-node_modules/
-
-bomberjam.exe
-replay.json
