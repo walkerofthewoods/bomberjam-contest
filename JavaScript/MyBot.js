@@ -35,6 +35,7 @@ const main = async () => {
     let bombs = [];
     let bonuses = [];
     let opponents = [];
+    let blastZone = [];
 
     try {
       // 3) Analyze the current state and decide what to do
@@ -48,30 +49,45 @@ const main = async () => {
           const tile = bomberjam.StateUtils.getTileAt(state, x, y);
           if (tile === bomberjam.Constants.Block) {
             // found a block to destroy
-            blocks.push([x,y]);
+            blocks.push([x, y]);
           }
 
-          const otherPlayer = bomberjam.StateUtils.findAlivePlayerAt(state, x, y);
+          const otherPlayer = bomberjam.StateUtils.findAlivePlayerAt(
+            state,
+            x,
+            y
+          );
           if (otherPlayer && otherPlayer.id !== game.myPlayerId) {
             // found an alive opponent
-            opponents.push([x,y]);
+            opponents.push([x, y]);
           }
 
           const bomb = bomberjam.StateUtils.findActiveBombAt(state, x, y);
           if (bomb) {
             // found an active bomb
-            bombs.push([x,y]);
+            bombs.push([x, y]);
           }
 
           const bonus = bomberjam.StateUtils.findDroppedBonusAt(state, x, y);
           if (bonus) {
             // found a bonus
-            bonuses.push([x,y]);
+            bonuses.push([x, y]);
           }
         }
       }
 
-      state.bombs.
+      let bombIds = Object.keys(state.bombs);
+      bombIds.forEach((bomb) => {
+        if (state.bombs[bomb].countdown == 1) {
+          blastZone.push([state.bombs[bomb].x, state.bombs[bomb].y]);
+          for (let i = 0; i < state.bombs[bomb].range; i++) {
+            blastZone.push([state.bombs[bomb].x + i, state.bombs[bomb].y]);
+            blastZone.push([state.bombs[bomb].x - i, state.bombs[bomb].y]);
+            blastZone.push([state.bombs[bomb].x, state.bombs[bomb].y + i]);
+            blastZone.push([state.bombs[bomb].x, state.bombs[bomb].y - i]);
+          }
+        }
+      });
 
       if (game.myPlayer.bombsLeft > 0) {
         // you can drop a bomb
@@ -84,14 +100,11 @@ const main = async () => {
         If I can move into place to place a bomb, do it
         If not, move toward the best long-term target
 
-        If its in blastZone, dont go there
+        If its in blastZone, don't go there
         if its a bonus, move to it
         if its a tile, move to it
 
       */
-
-
-
 
       // 4) Send your action
       const action = allActions[Math.floor(Math.random() * allActions.length)];
@@ -113,19 +126,23 @@ main()
     game.close();
   });
 
-function rangeFinder() {
+function rangeFinder() {}
 
-}
+function pathMaker(distance = 1) {
+  // return array with four possible squares to move to
 
-function pathMaker(distance =1) {
-// return array with four possible squares to move to
-
-let array = [
-  [xcoordinate+distance,ycoordinate],
-  [xcoordinate-distance,ycoordinate],
-  [xcoordinate,ycoordinate+distance],
-  [xcoordinate,ycoordinate-distance],
-]
+  let array = [
+    [xcoordinate + distance, ycoordinate],
+    [xcoordinate - distance, ycoordinate],
+    [xcoordinate, ycoordinate + distance],
+    [xcoordinate, ycoordinate - distance],
+  ];
 
   return array;
+}
+
+function move() {
+  let options = pathMaker();
+  let 
+
 }
