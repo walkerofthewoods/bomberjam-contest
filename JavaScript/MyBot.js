@@ -1,3 +1,14 @@
+// process.env.NODE_ENV = "PROD";
+
+// async function loader() {
+//   if (process.env.NODE_ENV == "PROD") {
+//     const { default: process } = await import("process");
+//     const { default: bomberjam } = await import("./bomberjam");
+//   }
+// }
+
+// loader();
+
 const process = require("process");
 const bomberjam = require("./bomberjam");
 
@@ -89,25 +100,9 @@ const main = async () => {
         }
       });
 
-      if (game.myPlayer.bombsLeft > 0) {
-        // you can drop a bomb
-      }
-
-      /* Logic ideas
-
-        If I don't have bombs, look for bonuses
-        If I have bombs, look for a player and tile to hit
-        If I can move into place to place a bomb, do it
-        If not, move toward the best long-term target
-
-        If its in blastZone, don't go there
-        if its a bonus, move to it
-        if its a tile, move to it
-
-      */
+      const action = move();
 
       // 4) Send your action
-      const action = allActions[Math.floor(Math.random() * allActions.length)];
       game.sendAction(action);
       logger.info("Tick " + state.tick + ", sent action: " + action);
     } catch (err) {
@@ -126,12 +121,49 @@ main()
     game.close();
   });
 
-function rangeFinder() {}
+function move() {
+  let options = pathMaker();
+  let priority1 = 0;
+  let priority2 = 0;
+  let priority3 = 0;
+  let priority4 = 0;
+  let priority5 = 0;
+
+  if (game.myPlayer.bombsLeft > 0) {
+    // you can drop a bomb
+  }
+
+  bonuses.find()
+
+  /* Logic ideas
+
+    If I don't have bombs, look for bonuses
+    If I have bombs, look for a player and tile to hit
+    If I can move into place to place a bomb, do it
+    If not, move toward the best long-term target
+
+    If its in blastZone, don't go there
+    if its a bonus, move to it
+    if its a tile, move to it
+
+    priorities:
+    bonus
+    if i have bombs:
+    tile
+    player
+    tie-breakers:closer to center of map
+
+  */
+
+
+}
+//function rangeFinder() {}
 
 function pathMaker(distance = 1) {
-  // return array with four possible squares to move to
+  // return array with five possible squares to consider
 
   let array = [
+    [xcoordinate, ycoordinate],
     [xcoordinate + distance, ycoordinate],
     [xcoordinate - distance, ycoordinate],
     [xcoordinate, ycoordinate + distance],
@@ -139,10 +171,4 @@ function pathMaker(distance = 1) {
   ];
 
   return array;
-}
-
-function move() {
-  let options = pathMaker();
-  let 
-
 }
